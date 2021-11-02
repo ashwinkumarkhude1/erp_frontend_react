@@ -2,8 +2,11 @@ import React, { useState, useEffect } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { ListGroup, Badge } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { useHistory } from "react-router";
 
 const Hierarchy = () => {
+  let history = useHistory();
   const [id, setId] = useState([]);
   const [hierarchy, setHierarchy] = useState([]);
 
@@ -14,10 +17,17 @@ const Hierarchy = () => {
     );
     let data = await res.json();
     setHierarchy(data);
+    console.log(data);
   };
 
   const inputsHandler = (e) => {
     setId(e.target.value);
+  };
+
+  const routeChange = (e) => {
+    console.log(e.target.value);
+    let path = "./employee";
+    history.push(path, e.target.value);
   };
 
   return (
@@ -51,7 +61,11 @@ const Hierarchy = () => {
               >
                 <div className="ms-2 me-auto">
                   <div className="fw-bold">{key}</div>
-                  {value.firstName + " " + value.lastName}
+                  <Link
+                    to={{ pathname: "./employee", state: { id: value.id } }}
+                  >
+                    {value.firstName + " " + value.lastName}
+                  </Link>
                 </div>
               </ListGroup.Item>
             </>

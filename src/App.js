@@ -1,5 +1,6 @@
-import React, { Component } from "react";
+import React, { useState, Component } from "react";
 import { Switch, Route, Link, BrowserRouter } from "react-router-dom";
+import { useHistory } from "react-router";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
@@ -10,53 +11,92 @@ import Hierarchy from "./components/employee/hierarchy";
 import AddTeam from "./components/team/addTeam";
 import TeamList from "./components/team/teamList";
 import UpdateTeam from "./components/team/updateTeam";
+import Navbar from "./components/navbar";
+import GoogleOauthlogin from "./components/googleOauthlogin";
+import Employee from "./components/employee/employee";
+import PrivateRoute from "./components/privateRoute";
 
 const App = () => {
+  let history = useHistory();
+  let [authenticated, setAuthenticated] = useState(false);
+
+  const childToParent = (childdata) => {
+    alert("authintication :" + childdata);
+    setAuthenticated(childdata);
+  };
+
+  const requireAuth = () => {
+    alert("authintication :" + authenticated);
+    if (!authenticated) {
+      let path = "/";
+      history.push(path);
+    }
+  };
+
   return (
     <BrowserRouter>
       <div>
-        <nav className="navbar navbar-expand navbar-dark bg-dark">
-          <Link to={"/employee"} className="navbar-brand">
-            ERP
-          </Link>
-          <div className="navbar-nav mr-auto">
-            <li className="nav-item">
-              <Link to={"/employee"} className="nav-link">
-                Employee List
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to={"/addEmployee"} className="nav-link">
-                Add Employee
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to={"/hierarchy"} className="nav-link">
-                Hierarchy
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to={"/addTeam"} className="nav-link">
-                Add Team
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to={"/team"} className="nav-link">
-                Team List
-              </Link>
-            </li>
-          </div>
-        </nav>
-
         <div className="container mt-3">
           <Switch>
-            <Route exact path={["/", "/employee"]} component={EmployeeList} />
-            <Route exact path="/addEmployee" component={AddEmployee} />
-            <Route exact path="/updateEmployee" component={UpdateEmployee} />
-            <Route exact path="/hierarchy" component={Hierarchy} />
-            <Route exact path="/addTeam" component={AddTeam} />
-            <Route exact path="/team" component={TeamList} />
-            <Route exact path="/updateTeam" component={UpdateTeam} />
+            <Route
+              exact
+              path={["/"]}
+              component={(props) => (
+                <GoogleOauthlogin childToParent={childToParent} />
+              )}
+              onEnter={requireAuth}
+            />
+            <div>
+              <Navbar />
+              <PrivateRoute
+                exact
+                path={["/employeeList"]}
+                component={EmployeeList}
+                isLogin={authenticated}
+              />
+              <Route
+                exact
+                path="/addEmployee"
+                component={AddEmployee}
+                onEnter={requireAuth}
+              />
+              <Route
+                exact
+                path="/updateEmployee"
+                component={UpdateEmployee}
+                onEnter={requireAuth}
+              />
+              <Route
+                exact
+                path="/hierarchy"
+                component={Hierarchy}
+                onEnter={requireAuth}
+              />
+              <Route
+                exact
+                path="/addTeam"
+                component={AddTeam}
+                onEnter={requireAuth}
+              />
+              <Route
+                exact
+                path="/team"
+                component={TeamList}
+                onEnter={requireAuth}
+              />
+              <Route
+                exact
+                path="/updateTeam"
+                component={UpdateTeam}
+                onEnter={requireAuth}
+              />
+              <Route
+                exact
+                path="/employee"
+                component={Employee}
+                onEnter={requireAuth}
+              />
+            </div>
           </Switch>
         </div>
       </div>

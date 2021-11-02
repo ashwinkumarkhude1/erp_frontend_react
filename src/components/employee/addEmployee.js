@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.css";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import { Dropdown } from "react-bootstrap";
+import { Dropdown, Modal } from "react-bootstrap";
+import Employee from "./employee";
 
 const AddEmployee = () => {
+  const [showPopUP, setShowPopUp] = useState(false);
   const [inputField, setInputField] = useState({
     firstName: "",
     lastName: "",
@@ -17,16 +19,52 @@ const AddEmployee = () => {
     manager: "",
     teamLead: "",
   });
-  var uiHierarchy = ["DUHead", "Manager", "TL"];
-  var keyHierarchy = ["duHead", "manager", "teamLead"];
+  const uiHierarchy = ["DUHead", "Manager", "TL"];
+  const keyHierarchy = ["duHead", "manager", "teamLead"];
+  const [duHead, setDuHead] = useState();
+  const [manager, setManager] = useState();
+  const [teamLead, setTeamLead] = useState();
+  const [higherUps, setHigherUps] = useState();
+
   const [hierarchy, setHierarchy] = useState([]);
   const [response, setResponse] = useState();
-  const [errorResponse, setErrorResponse] = useState();
 
   const inputsHandler = (e) => {
     setInputField({ ...inputField, [e.target.name]: e.target.value });
     if (e.target.name == "position") removeHierarchy(e.target.value);
   };
+
+  const getEmployeeOfPosition = async () => {
+    let res = await fetch(
+      "http://localhost:3000/employee/getEmployeesOfPosition/"
+    );
+    let data = await res.json();
+    setHigherUps(data);
+  };
+
+  const getAllSuggestions = async () => {
+    getEmployeeOfPosition();
+    // setDuHead(await getEmployeeOfPosition("DUHead"));
+    // setManager(await getEmployeeOfPosition("Manager"));
+    // setTeamLead(await getEmployeeOfPosition("TL"));
+    // setHigherUps({
+    //   ...higherUps,
+    //   ["duHead"]: await getEmployeeOfPosition("DUHead"),
+    // });
+    // setHigherUps({
+    //   ...higherUps,
+    //   ["manger"]: await getEmployeeOfPosition("Manager"),
+    // });
+    // setHigherUps({
+    //   ...higherUps,
+    //   ["teamLead"]: await getEmployeeOfPosition("TL"),
+    // });
+    console.log(higherUps);
+  };
+
+  useEffect(() => {
+    getAllSuggestions();
+  }, []);
 
   const removeHierarchy = (pos) => {
     var array = [...keyHierarchy];
@@ -35,6 +73,7 @@ const AddEmployee = () => {
       array.splice(index, 5);
     }
     pos == "" ? setHierarchy([]) : setHierarchy(array);
+    getAllSuggestions();
   };
 
   const submitButton = async (e) => {
@@ -56,8 +95,14 @@ const AddEmployee = () => {
     } catch {
       console.log("error");
     }
+    handleShowPopUp();
     console.log("response");
     console.log(data);
+  };
+
+  const handleClosePopUp = () => setShowPopUp(false);
+  const handleShowPopUp = () => {
+    setShowPopUp(true);
   };
 
   return (
@@ -152,6 +197,28 @@ const AddEmployee = () => {
             <>
               <Form.Group>
                 <Form.Label>{curElem}:</Form.Label>
+                <div>
+                  <select
+                    name={curElem}
+                    onChange={inputsHandler}
+                    value={inputField[{ curElem }]}
+                  >
+                    <option value="">Select</option>
+                    {higherUps[curElem] &&
+                      higherUps[curElem].map((emp) => {
+                        return (
+                          <>
+                            <option value={emp.id}>
+                              {emp.firstName + " " + emp.lastName}
+                            </option>
+                          </>
+                        );
+                      })}
+                  </select>
+                </div>
+              </Form.Group>
+              {/* <Form.Group>
+                <Form.Label>{curElem}:</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Enter id"
@@ -159,7 +226,7 @@ const AddEmployee = () => {
                   onChange={inputsHandler}
                   value={inputField[{ curElem }]}
                 />
-              </Form.Group>
+              </Form.Group> */}
             </>
           );
         })}
@@ -167,7 +234,18 @@ const AddEmployee = () => {
         <Button variant="primary" type="submit" onClick={submitButton}>
           Submit
         </Button>
-        <div>{response && response}</div>
+        <Modal show={showPopUP} onHide={handleClosePopUp}>
+          <Modal.Header closeButton>
+            <Modal.Title>Response</Modal.Title>
+          </Modal.Header>
+          <Modal.Body className="text-break">{response}</Modal.Body>
+          <Modal.Footer>
+            <Button variant="primary" onClick={handleClosePopUp}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        {/* <div>{response && response}</div> */}
       </Form>
     </div>
   );
