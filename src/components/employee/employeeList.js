@@ -3,17 +3,17 @@ import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import { Modal } from "react-bootstrap";
 import { useHistory } from "react-router";
+import { getAllEmployeeList, deleteEmployee } from "../../services/api";
 
 const EmployeeList = () => {
   let history = useHistory();
   const [show, setShow] = useState(false);
   const [menuData, setMenuData] = useState(null);
   const getEmployee = async () => {
-    let res = await fetch("http://localhost:3000/employee/get");
-    let data = await res.json();
+    let data = await getAllEmployeeList();
     setMenuData(data);
   };
-  const [deleteEmployee, setDeleteEmplyee] = useState([]);
+  const [deleteEmpId, setDeleteEmpId] = useState([]);
 
   useEffect(() => {
     getEmployee();
@@ -26,35 +26,14 @@ const EmployeeList = () => {
 
   const deleteButton = async (e) => {
     e.preventDefault(e);
-    console.log("id:" + deleteEmployee);
-    let data;
-    const requestOptions = {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: deleteEmployee }),
-    };
-
-    const response = await fetch(
-      "http://localhost:3000/employee/deleteEmployee",
-      requestOptions
-    );
-    try {
-      data = await response.json();
-      // setResponse(data.message);
-    } catch {
-      console.log("error");
-    }
-    console.log("response");
-    console.log(data);
+    await deleteEmployee(deleteEmpId);
     handleClose();
   };
 
   const handleClose = () => setShow(false);
   const handleShow = (e) => {
     setShow(true);
-    setDeleteEmplyee(e.target.value);
-    console.log("Id for deleteing");
-    console.log(e.target.value);
+    setDeleteEmpId(e.target.value);
   };
 
   return (
@@ -120,11 +99,6 @@ const EmployeeList = () => {
                         <Button
                           variant="primary"
                           type="submit"
-                          // value={{
-                          //   id: id,
-                          //   firstName: firstName,
-                          //   lastName: lastName,
-                          // }}
                           value={id}
                           onClick={handleShow}
                         >

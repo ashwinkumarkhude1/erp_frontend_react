@@ -3,6 +3,7 @@ import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import { Modal } from "react-bootstrap";
 import { useHistory } from "react-router";
+import { getTeamList, deleteTeam } from "../../services/api";
 
 const TeamList = () => {
   let history = useHistory();
@@ -10,12 +11,10 @@ const TeamList = () => {
   const [menuData, setMenuData] = useState(null);
 
   const getTeam = async () => {
-    let res = await fetch("http://localhost:3000/team/get");
-    let data = await res.json();
+    let data = await getTeamList();
     setMenuData(data);
-    console.log(menuData);
   };
-  const [deleteEmployee, setDeleteEmplyee] = useState([]);
+  const [deleteTeamId, setDeleteTeam] = useState([]);
 
   useEffect(() => {
     getTeam();
@@ -28,35 +27,14 @@ const TeamList = () => {
 
   const deleteButton = async (e) => {
     e.preventDefault(e);
-    console.log("id:" + deleteEmployee);
-    let data;
-    const requestOptions = {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: deleteEmployee }),
-    };
-
-    const response = await fetch(
-      "http://localhost:3000/team/deleteTeam",
-      requestOptions
-    );
-    try {
-      data = await response.json();
-      // setResponse(data.message);
-    } catch {
-      console.log("error");
-    }
-    console.log("response");
-    console.log(data);
+    await deleteTeam(deleteTeamId);
     handleClose();
   };
 
   const handleClose = () => setShow(false);
   const handleShow = (e) => {
     setShow(true);
-    setDeleteEmplyee(e.target.value);
-    console.log("Id for deleteing");
-    console.log(e.target.value);
+    setDeleteTeam(e.target.value);
   };
 
   return (
@@ -65,7 +43,6 @@ const TeamList = () => {
       <Table striped bordered hover varient="dark" size="sm">
         <thead>
           <tr>
-            {/* <th width="40">Id</th> */}
             <th width="170">Team Name</th>
             <th width="170">DU Head</th>
             <th width="170">Manager</th>
@@ -88,7 +65,6 @@ const TeamList = () => {
                 return (
                   <>
                     <tr>
-                      {/* <th>{id}</th> */}
                       <th>{name}</th>
                       <th>{duHead}</th>
                       <th>{manager}</th>

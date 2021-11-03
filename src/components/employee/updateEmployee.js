@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { useLocation } from "react-router";
+import { getEmployeeDetails, updateEmployee } from "../../services/api";
 
 const UpdateEmployee = () => {
   let location = useLocation();
@@ -24,12 +25,8 @@ const UpdateEmployee = () => {
   const [response, setResponse] = useState();
 
   const getEmployee = async () => {
-    let res = await fetch(
-      "http://localhost:3000/employee/get/" + location.state
-    );
-    let data = await res.json();
+    let data = await getEmployeeDetails(location.state);
     setInputField(data);
-    console.log(inputField);
   };
 
   useEffect(() => {
@@ -42,25 +39,8 @@ const UpdateEmployee = () => {
 
   const submitButton = async (e) => {
     e.preventDefault(e);
-    let data;
-    const requestOptions = {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(inputField),
-    };
-
-    const response = await fetch(
-      "http://localhost:3000/employee/updateEmployee",
-      requestOptions
-    );
-    try {
-      data = await response.json();
-      setResponse(data.message);
-    } catch {
-      console.log("error");
-    }
-    console.log("response");
-    console.log(data);
+    let data = await updateEmployee(inputField);
+    setResponse(data);
   };
 
   return (

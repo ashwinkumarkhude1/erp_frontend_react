@@ -4,30 +4,19 @@ import Button from "react-bootstrap/Button";
 import { ListGroup, Badge } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useHistory } from "react-router";
-
+import { getEmployeeHigherHierarchy } from "../../services/api";
 const EmployeeHierarchy = () => {
-  let history = useHistory();
   const [id, setId] = useState([]);
   const [hierarchy, setHierarchy] = useState([]);
 
-  const getEmployeeHigherHierarchy = async (e) => {
+  const getEmployeeHierarchy = async (e) => {
     e.preventDefault(e);
-    let res = await fetch(
-      "http://localhost:3000/employee/getEmployeeHigherHierarchy/" + id
-    );
-    let data = await res.json();
+    let data = await getEmployeeHigherHierarchy(id);
     setHierarchy(data);
-    console.log(data);
   };
 
   const inputsHandler = (e) => {
     setId(e.target.value);
-  };
-
-  const routeChange = (e) => {
-    console.log(e.target.value);
-    let path = "./employee";
-    history.push(path, e.target.value);
   };
 
   return (
@@ -43,11 +32,7 @@ const EmployeeHierarchy = () => {
           />
         </Form.Group>
 
-        <Button
-          variant="primary"
-          type="submit"
-          onClick={getEmployeeHigherHierarchy}
-        >
+        <Button variant="primary" type="submit" onClick={getEmployeeHierarchy}>
           Submit
         </Button>
       </Form>
@@ -62,7 +47,10 @@ const EmployeeHierarchy = () => {
                 <div className="ms-2 me-auto">
                   <div className="fw-bold">{key}</div>
                   <Link
-                    to={{ pathname: "./employee", state: { id: value.id } }}
+                    to={{
+                      pathname: "./employeeDetails",
+                      state: { id: value.id },
+                    }}
                   >
                     {value.firstName + " " + value.lastName}
                   </Link>

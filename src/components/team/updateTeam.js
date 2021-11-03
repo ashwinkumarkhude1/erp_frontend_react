@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { useLocation } from "react-router";
+import { getTeamDetails, updateTeam } from "../../services/api";
 
 const UpdateTeam = () => {
   let location = useLocation();
@@ -16,10 +17,8 @@ const UpdateTeam = () => {
   const [response, setResponse] = useState();
 
   const getTeam = async () => {
-    let res = await fetch("http://localhost:3000/team/get/" + location.state);
-    let data = await res.json();
+    let data = await getTeamDetails(location.state);
     setInputField(data);
-    console.log(inputField);
   };
 
   useEffect(() => {
@@ -35,24 +34,8 @@ const UpdateTeam = () => {
     let data;
     var array = JSON.parse("[" + inputField.teamMember + "]");
     inputField.teamMember = array;
-    const requestOptions = {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(inputField),
-    };
-
-    const response = await fetch(
-      "http://localhost:3000/team/updateTeam",
-      requestOptions
-    );
-    try {
-      data = await response.json();
-      setResponse(data.message);
-    } catch {
-      console.log("error");
-    }
-    console.log("response");
-    console.log(data);
+    data = await updateTeam(inputField);
+    setResponse(data);
   };
 
   return (

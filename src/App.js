@@ -11,26 +11,17 @@ import EmployeeHierarchy from "./components/employee/employeeHierarchy";
 import AddTeam from "./components/team/addTeam";
 import TeamList from "./components/team/teamList";
 import UpdateTeam from "./components/team/updateTeam";
-import Navbar from "./components/navbar";
-import GoogleOauthlogin from "./components/googleOauthlogin";
+import Navbar from "./components/navbar/navbar";
+import GoogleOauthlogin from "./services/googleOauthlogin";
 import Employee from "./components/employee/employeeDetails";
-import PrivateRoute from "./components/privateRoute";
+import PrivateRoute from "./components/privateRoute/privateRoute";
 
 const App = () => {
   let history = useHistory();
   let [authenticated, setAuthenticated] = useState(false);
 
   const childToParent = (childdata) => {
-    alert("authintication :" + childdata);
     setAuthenticated(childdata);
-  };
-
-  const requireAuth = () => {
-    alert("authintication :" + authenticated);
-    if (!authenticated) {
-      let path = "/";
-      history.push(path);
-    }
   };
 
   return (
@@ -67,7 +58,7 @@ const App = () => {
               />
               <PrivateRoute
                 exact
-                path="/hierarchy"
+                path="/employeeHierarchy"
                 component={EmployeeHierarchy}
                 isLogin={authenticated}
               />
@@ -91,7 +82,7 @@ const App = () => {
               />
               <PrivateRoute
                 exact
-                path="/employee"
+                path="/employeeDetails"
                 component={Employee}
                 isLogin={authenticated}
               />

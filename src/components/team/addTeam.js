@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { Dropdown } from "react-bootstrap";
-
+import { addTeam } from "../../services/api";
 const AddTeam = () => {
   const [inputField, setInputField] = useState({
     name: "",
@@ -23,27 +23,10 @@ const AddTeam = () => {
   const submitButton = async (e) => {
     e.preventDefault(e);
     let data;
-    var array = JSON.parse("[" + inputField.teamMember + "]");
+    let array = JSON.parse("[" + inputField.teamMember + "]");
     inputField.teamMember = array;
-    console.log(inputField);
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(inputField),
-    };
-
-    const response = await fetch(
-      "http://localhost:3000/team/addTeam",
-      requestOptions
-    );
-    try {
-      data = await response.json();
-      setResponse(data.message);
-    } catch {
-      console.log("error");
-    }
-    console.log("response");
-    console.log(data);
+    data = await addTeam(inputField);
+    setResponse(data);
   };
 
   return (

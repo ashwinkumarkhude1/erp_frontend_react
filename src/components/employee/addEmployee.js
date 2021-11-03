@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { Dropdown, Modal } from "react-bootstrap";
-import Employee from "./employeeDetails";
+import { addEmployee, getEmployeeOfPosition } from "../../services/api";
 
 const AddEmployee = () => {
   const [showPopUP, setShowPopUp] = useState(false);
@@ -32,55 +32,29 @@ const AddEmployee = () => {
     if (e.target.name == "position") removeHierarchy(e.target.value);
   };
 
-  const getEmployeeOfPosition = async () => {
-    let res = await fetch(
-      "http://localhost:3000/employee/getEmployeesOfPosition/"
-    );
-    let data = await res.json();
+  const getHigherUp = async () => {
+    let data = await getEmployeeOfPosition();
     setHigherUps(data);
   };
 
-  const getAllSuggestions = async () => {
-    getEmployeeOfPosition();
-    console.log(higherUps);
-  };
-
   useEffect(() => {
-    getAllSuggestions();
+    getHigherUp();
   }, []);
 
   const removeHierarchy = (pos) => {
-    var array = [...keyHierarchy];
-    var index = uiHierarchy.indexOf(pos);
+    let array = [...keyHierarchy];
+    let index = uiHierarchy.indexOf(pos);
     if (index !== -1) {
       array.splice(index, 5);
     }
     pos == "" ? setHierarchy([]) : setHierarchy(array);
-    getAllSuggestions();
   };
 
   const submitButton = async (e) => {
     e.preventDefault(e);
-    let data;
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(inputField),
-    };
-
-    const response = await fetch(
-      "http://localhost:3000/employee/addEmployee",
-      requestOptions
-    );
-    try {
-      data = await response.json();
-      setResponse(data.message);
-    } catch {
-      console.log("error");
-    }
+    let data = await addEmployee(inputField);
+    setResponse(data);
     handleShowPopUp();
-    console.log("response");
-    console.log(data);
   };
 
   const handleClosePopUp = () => setShowPopUp(false);

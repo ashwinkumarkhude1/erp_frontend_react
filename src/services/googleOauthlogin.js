@@ -11,7 +11,6 @@ const GoogleOauthlogin = ({ childToParent }) => {
   };
 
   const fail = () => {
-    console.log("Authentication failed");
     childToParent(false);
   };
   return (
