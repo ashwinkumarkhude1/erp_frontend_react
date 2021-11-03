@@ -92,6 +92,7 @@ const EmployeeList = () => {
                   address,
                   mobileNo,
                   position,
+                  team,
                 } = curElem;
                 return (
                   <>
@@ -104,6 +105,7 @@ const EmployeeList = () => {
                       <th>{address}</th>
                       <th>{mobileNo}</th>
                       <th>{position}</th>
+                      <th>{team}</th>
                       <th>
                         <Button
                           variant="primary"

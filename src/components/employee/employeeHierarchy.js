@@ -5,7 +5,7 @@ import { ListGroup, Badge } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useHistory } from "react-router";
 
-const Hierarchy = () => {
+const EmployeeHierarchy = () => {
   let history = useHistory();
   const [id, setId] = useState([]);
   const [hierarchy, setHierarchy] = useState([]);
@@ -75,4 +75,4 @@ const Hierarchy = () => {
   );
 };
 
-export default Hierarchy;
+export default EmployeeHierarchy;

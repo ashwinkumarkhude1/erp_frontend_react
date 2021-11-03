@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { Dropdown, Modal } from "react-bootstrap";
-import Employee from "./employee";
+import Employee from "./employeeDetails";
 
 const AddEmployee = () => {
   const [showPopUP, setShowPopUp] = useState(false);
@@ -18,12 +18,10 @@ const AddEmployee = () => {
     duHead: "",
     manager: "",
     teamLead: "",
+    team: "",
   });
   const uiHierarchy = ["DUHead", "Manager", "TL"];
   const keyHierarchy = ["duHead", "manager", "teamLead"];
-  const [duHead, setDuHead] = useState();
-  const [manager, setManager] = useState();
-  const [teamLead, setTeamLead] = useState();
   const [higherUps, setHigherUps] = useState();
 
   const [hierarchy, setHierarchy] = useState([]);
@@ -44,21 +42,6 @@ const AddEmployee = () => {
 
   const getAllSuggestions = async () => {
     getEmployeeOfPosition();
-    // setDuHead(await getEmployeeOfPosition("DUHead"));
-    // setManager(await getEmployeeOfPosition("Manager"));
-    // setTeamLead(await getEmployeeOfPosition("TL"));
-    // setHigherUps({
-    //   ...higherUps,
-    //   ["duHead"]: await getEmployeeOfPosition("DUHead"),
-    // });
-    // setHigherUps({
-    //   ...higherUps,
-    //   ["manger"]: await getEmployeeOfPosition("Manager"),
-    // });
-    // setHigherUps({
-    //   ...higherUps,
-    //   ["teamLead"]: await getEmployeeOfPosition("TL"),
-    // });
     console.log(higherUps);
   };
 
@@ -217,19 +200,19 @@ const AddEmployee = () => {
                   </select>
                 </div>
               </Form.Group>
-              {/* <Form.Group>
-                <Form.Label>{curElem}:</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Enter id"
-                  name={curElem}
-                  onChange={inputsHandler}
-                  value={inputField[{ curElem }]}
-                />
-              </Form.Group> */}
             </>
           );
         })}
+        <Form.Group>
+          <Form.Label>Team(Optional):</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter team"
+            name="team"
+            onChange={inputsHandler}
+            value={inputField.team}
+          />
+        </Form.Group>
 
         <Button variant="primary" type="submit" onClick={submitButton}>
           Submit

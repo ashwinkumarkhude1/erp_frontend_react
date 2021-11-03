@@ -19,6 +19,7 @@ const UpdateEmployee = () => {
     duHead: "",
     manager: "",
     teamLead: "",
+    team: "",
   });
   const [response, setResponse] = useState();
 
@@ -129,6 +130,16 @@ const UpdateEmployee = () => {
             name="mobileNo"
             onChange={inputsHandler}
             value={inputField && inputField.mobileNo}
+          />
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>Team(Optional):</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter team"
+            name="team"
+            onChange={inputsHandler}
+            value={inputField.team}
           />
         </Form.Group>
         <Button variant="primary" type="submit" onClick={submitButton}>
