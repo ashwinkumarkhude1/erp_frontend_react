@@ -1,0 +1,11 @@
+FROM node:14.4.0 AS build
+EXPOSE 8000
+RUN mkdir -p /erp_frontend_react/public /erp_frontend_react/src
+WORKDIR /erp_frontend_react
+
+COPY package.json /erp_frontend_react/package.json
+COPY package-lock.json /erp_frontend_react/package-lock.json
+
+RUN npm install
+
+CMD ["npm", "run", "start"]

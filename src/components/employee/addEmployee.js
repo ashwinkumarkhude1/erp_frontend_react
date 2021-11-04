@@ -43,11 +43,15 @@ const AddEmployee = () => {
 
   const removeHierarchy = (pos) => {
     let array = [...keyHierarchy];
-    let index = uiHierarchy.indexOf(pos);
+    let index;
+    if (pos == "CEO" || pos == "MD") {
+      index = 0;
+    } else index = uiHierarchy.indexOf(pos);
     if (index !== -1) {
-      array.splice(index, 5);
+      array.splice(index, 3);
     }
     pos == "" ? setHierarchy([]) : setHierarchy(array);
+    getHigherUp();
   };
 
   const submitButton = async (e) => {
@@ -141,6 +145,8 @@ const AddEmployee = () => {
               value={inputField.position}
             >
               <option value="">Select</option>
+              <option value="CEO">CEO</option>
+              <option value="MD">MD</option>
               <option value="DUHead">DU Head</option>
               <option value="Manager">Manager</option>
               <option value="TL">Team Lead</option>
