@@ -50,6 +50,7 @@ const EmployeeList = () => {
             <th width="170">Address</th>
             <th width="170">MobileNo</th>
             <th width="170">Position</th>
+            <th width="170">Team</th>
             <th width="170">Operation</th>
             <th width="170">Operation</th>
           </tr>
