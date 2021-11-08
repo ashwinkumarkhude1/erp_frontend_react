@@ -8,7 +8,7 @@ import { getAllEmployeeList, deleteEmployee } from "../../services/api";
 const EmployeeList = () => {
   let history = useHistory();
   const [show, setShow] = useState(false);
-  const [menuData, setMenuData] = useState(null);
+  const [menuData, setMenuData] = useState([]);
   const getEmployee = async () => {
     let data = await getAllEmployeeList();
     setMenuData(data);
