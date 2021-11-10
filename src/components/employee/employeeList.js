@@ -27,6 +27,7 @@ const EmployeeList = () => {
   const deleteButton = async (e) => {
     e.preventDefault(e);
     await deleteEmployee(deleteEmpId);
+    getEmployee();
     handleClose();
   };
 

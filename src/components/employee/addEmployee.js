@@ -4,6 +4,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { Dropdown, Modal } from "react-bootstrap";
 import { addEmployee, getEmployeeOfPosition } from "../../services/api";
+import PhoneInput from "react-phone-number-input";
 
 const AddEmployee = () => {
   const [showPopUP, setShowPopUp] = useState(false);
@@ -29,7 +30,7 @@ const AddEmployee = () => {
 
   const inputsHandler = (e) => {
     setInputField({ ...inputField, [e.target.name]: e.target.value });
-    if (e.target.name == "position") removeHierarchy(e.target.value);
+    if (e.target.name == "position") updateHigherUpToBeShown(e.target.value);
   };
 
   const getHigherUp = async () => {
@@ -41,6 +42,14 @@ const AddEmployee = () => {
     getHigherUp();
   }, []);
 
+  const updateHigherUpToBeShown = (pos) => {
+    if (pos === "Manager") setHierarchy(["duHead"]);
+    else if (pos === "TL") setHierarchy(["manager"]);
+    else if (pos === "SDE") setHierarchy(["teamLead"]);
+    else setHierarchy([]);
+    getHigherUp();
+  };
+
   const removeHierarchy = (pos) => {
     let array = [...keyHierarchy];
     let index;
@@ -51,6 +60,8 @@ const AddEmployee = () => {
       array.splice(index, 3);
     }
     pos == "" ? setHierarchy([]) : setHierarchy(array);
+    console.log("After");
+    console.log(inputField);
     getHigherUp();
   };
 
@@ -208,7 +219,6 @@ const AddEmployee = () => {
             </Button>
           </Modal.Footer>
         </Modal>
-        {/* <div>{response && response}</div> */}
       </Form>
     </div>
   );
