@@ -4,6 +4,7 @@ import { useLocation } from "react-router";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { getEmployeeDetails } from "../../services/api";
+import Table from "react-bootstrap/Table";
 
 const Employee = () => {
   const [employeeDetails, setEmployeeDetails] = useState([]);
@@ -35,22 +36,36 @@ const Employee = () => {
       <div id="divToPrint">
         <div>
           <h1>Employee Detail Page</h1>
-          {employeeDetails &&
-            Object.entries(employeeDetails).map(([key, value]) => {
-              return (
-                <>
-                  <ListGroup.Item
-                    as="li"
-                    className="d-flex justify-content-between align-items-start"
-                  >
-                    <div className="ms-2 me-auto">
-                      <div className="fw-bold">{key}</div>
-                      {value}
-                    </div>
-                  </ListGroup.Item>
-                </>
-              );
-            })}
+          <Table striped bordered hover varient="dark" size="sm">
+            <thead>
+              <tr>
+                <th width="20"></th>
+                <th width="200"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {employeeDetails &&
+                Object.entries(employeeDetails).map(([key, value]) => {
+                  return (
+                    // <>
+                    //   <ListGroup.Item
+                    //     as="li"
+                    //     className="d-flex justify-content-between align-items-start"
+                    //   >
+                    //     <div className="ms-2 me-auto">
+                    //       <div className="fw-bold">{key}</div>
+                    //       {value}
+                    //     </div>
+                    //   </ListGroup.Item>
+                    // </>
+                    <tr>
+                      <th>{key}</th>
+                      <th>{value}</th>
+                    </tr>
+                  );
+                })}
+            </tbody>
+          </Table>
         </div>
       </div>
     </div>

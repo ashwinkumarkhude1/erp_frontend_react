@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.css";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import { Dropdown } from "react-bootstrap";
-import { addTeam } from "../../services/api";
+import { Dropdown, Modal } from "react-bootstrap";
+import { addTeam, getEmployeeOfPosition } from "../../services/api";
 const AddTeam = () => {
+  const [showPopUP, setShowPopUp] = useState(false);
   const [inputField, setInputField] = useState({
     name: "",
     duHead: "",
@@ -13,12 +14,29 @@ const AddTeam = () => {
     teamMember: "",
   });
 
+  const [hierarchy, setHierarchy] = useState([
+    "duHead",
+    "manager",
+    "teamLead",
+    "teamMember",
+  ]);
   const [response, setResponse] = useState();
+  const [higherUps, setHigherUps] = useState();
+  const [teamMemberRowNos, setTeamMemberRowNos] = useState(0);
 
   const inputsHandler = (e) => {
     setInputField({ ...inputField, [e.target.name]: e.target.value });
     console.log(inputField);
   };
+
+  const getHigherUp = async () => {
+    let data = await getEmployeeOfPosition();
+    setHigherUps(data);
+  };
+
+  useEffect(() => {
+    getHigherUp();
+  }, []);
 
   const submitButton = async (e) => {
     e.preventDefault(e);
@@ -27,6 +45,17 @@ const AddTeam = () => {
     inputField.teamMember = array;
     data = await addTeam(inputField);
     setResponse(data);
+    console.log(data);
+    handleShowPopUp();
+  };
+
+  const setRowNo = () => {
+    setTeamMemberRowNos(teamMemberRowNos + 1);
+  };
+
+  const handleClosePopUp = () => setShowPopUp(false);
+  const handleShowPopUp = () => {
+    setShowPopUp(true);
   };
 
   return (
@@ -44,7 +73,7 @@ const AddTeam = () => {
           />
         </Form.Group>
 
-        <Form.Group>
+        {/* <Form.Group>
           <Form.Label>DU Head:</Form.Label>
           <Form.Control
             type="text"
@@ -75,22 +104,79 @@ const AddTeam = () => {
             onChange={inputsHandler}
             value={inputField.teamLead}
           />
-        </Form.Group>
+        </Form.Group> */}
 
+        {higherUps &&
+          hierarchy.map((curElem) => {
+            return (
+              <>
+                <Form.Group>
+                  <Form.Label>{curElem}:</Form.Label>
+                  <div>
+                    <select
+                      name={curElem}
+                      onChange={inputsHandler}
+                      value={inputField[{ curElem }]}
+                    >
+                      <option value="">Select</option>
+                      {higherUps[curElem] &&
+                        higherUps[curElem].map((emp) => {
+                          return (
+                            <>
+                              <option value={emp.id}>
+                                {emp.firstName + " " + emp.lastName}
+                              </option>
+                            </>
+                          );
+                        })}
+                    </select>
+                  </div>
+                </Form.Group>
+              </>
+            );
+          })}
+        {/* 
         <Form.Group>
           <Form.Label>Team Members:</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Enter Team Members ID's"
-            name="teamMember"
-            onChange={inputsHandler}
-            value={inputField.teamMember}
-          />
-        </Form.Group>
+          <div>
+            <select
+              name="teamMembers"
+              onChange={inputsHandler}
+              value={inputField.teamMembers}
+            >
+              <option value="">Select</option>
+              {higherUps &&
+                higherUps.teamMembers.map((emp) => {
+                  return (
+                    <>
+                      <option value={emp.id}>
+                        {emp.firstName + " " + emp.lastName}
+                      </option>
+                    </>
+                  );
+                })}
+            </select>
+          </div>
+        </Form.Group> */}
         <Button variant="primary" type="submit" onClick={submitButton}>
           Submit
         </Button>
-        <div>{response && response}</div>
+        <Modal show={showPopUP} onHide={handleClosePopUp}>
+          <Modal.Header closeButton>
+            <Modal.Title>{response && response.status}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body className="text-break">
+            {response && response.MissingFields && (
+              <p>Missing Fields: {response.MissingFields}</p>
+            )}
+            {response && response.message && <p>{response.message}</p>}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="primary" onClick={handleClosePopUp}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </Form>
     </div>
   );

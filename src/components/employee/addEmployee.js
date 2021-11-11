@@ -3,8 +3,13 @@ import "bootstrap/dist/css/bootstrap.css";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { Dropdown, Modal } from "react-bootstrap";
-import { addEmployee, getEmployeeOfPosition } from "../../services/api";
-import PhoneInput from "react-phone-number-input";
+import {
+  addEmployee,
+  getEmployeeOfPosition,
+  getTeamList,
+} from "../../services/api";
+import "react-phone-number-input/style.css";
+import InputMask from "react-input-mask";
 
 const AddEmployee = () => {
   const [showPopUP, setShowPopUp] = useState(false);
@@ -24,6 +29,7 @@ const AddEmployee = () => {
   const uiHierarchy = ["DUHead", "Manager", "TL"];
   const keyHierarchy = ["duHead", "manager", "teamLead"];
   const [higherUps, setHigherUps] = useState();
+  const [teams, setTeams] = useState([]);
 
   const [hierarchy, setHierarchy] = useState([]);
   const [response, setResponse] = useState();
@@ -40,6 +46,7 @@ const AddEmployee = () => {
 
   useEffect(() => {
     getHigherUp();
+    getTeams();
   }, []);
 
   const updateHigherUpToBeShown = (pos) => {
@@ -69,12 +76,28 @@ const AddEmployee = () => {
     e.preventDefault(e);
     let data = await addEmployee(inputField);
     setResponse(data);
+    console.log(data);
     handleShowPopUp();
   };
 
   const handleClosePopUp = () => setShowPopUp(false);
   const handleShowPopUp = () => {
     setShowPopUp(true);
+  };
+
+  const getTeams = async () => {
+    let data = await getTeamList();
+    setTeams(data);
+  };
+
+  const PhoneInput = (props) => {
+    return (
+      <InputMask
+        mask="(+1) 999 999 9999"
+        value={props.value}
+        onChange={props.onChange}
+      ></InputMask>
+    );
   };
 
   return (
@@ -138,13 +161,32 @@ const AddEmployee = () => {
 
         <Form.Group>
           <Form.Label>Mobile Number:</Form.Label>
-          <Form.Control
+          {/* <Form.Control
             type="text"
             placeholder="Enter your mobile number"
             name="mobileNo"
             onChange={inputsHandler}
             value={inputField.mobileNo}
+          /> */}
+          {/* <div>
+          <label>Mobile No:</label>
+          <PhoneInput
+            international
+            defaultCountry="IN"
+            placeholder="Enter your mobile number"
+            name="mobileNo"
+            onChange={inputsHandler}
+            value={inputField.mobileNo}
           />
+        </div> */}
+          <div>
+            <InputMask
+              mask="999 999 9999"
+              name="mobileNo"
+              onChange={inputsHandler}
+              value={inputField.mobileNo}
+            ></InputMask>
+          </div>
         </Form.Group>
 
         <Form.Group>
@@ -194,7 +236,7 @@ const AddEmployee = () => {
             </>
           );
         })}
-        <Form.Group>
+        {/* <Form.Group>
           <Form.Label>Team(Optional):</Form.Label>
           <Form.Control
             type="text"
@@ -203,16 +245,46 @@ const AddEmployee = () => {
             onChange={inputsHandler}
             value={inputField.team}
           />
-        </Form.Group>
+        </Form.Group> */}
+        {
+          <Form.Group>
+            <Form.Label>Team:</Form.Label>
+            <div>
+              <select
+                name="team"
+                onChange={inputsHandler}
+                value={inputField.team}
+              >
+                <option value="">Select</option>
+                {teams &&
+                  teams.map((team) => {
+                    return (
+                      <>
+                        <option value={team.name}>{team.name}</option>
+                      </>
+                    );
+                  })}
+              </select>
+            </div>
+          </Form.Group>
+        }
 
         <Button variant="primary" type="submit" onClick={submitButton}>
           Submit
         </Button>
         <Modal show={showPopUP} onHide={handleClosePopUp}>
           <Modal.Header closeButton>
-            <Modal.Title>Response</Modal.Title>
+            <Modal.Title>{response && response.status}</Modal.Title>
           </Modal.Header>
-          <Modal.Body className="text-break">{response}</Modal.Body>
+          <Modal.Body className="text-break">
+            {response && response.MissingFields && (
+              <p>Missing Fields: {response.MissingFields}</p>
+            )}
+            {response && response.IncorrectFields && (
+              <p>Incorrect Fields: {response.IncorrectFields}</p>
+            )}
+            {response && response.message && <p>{response.message}</p>}
+          </Modal.Body>
           <Modal.Footer>
             <Button variant="primary" onClick={handleClosePopUp}>
               Close
